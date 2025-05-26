@@ -1,36 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Modal, Form, Button, Alert, Row, Col } from "react-bootstrap"
-import { Calendar, Clock, MapPin, Bell } from "lucide-react"
+import { Calendar, MapPin, Bell } from "lucide-react"
 
-const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
+const ScheduleEventModal = ({ show, onHide, onSubmit, selectedDate }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     start_datetime: "",
-    end_datetime: "",
     location: "",
     reminder: false,
-    is_all_day: false,
+    is_all_day: true, // Default to all day since no time selection
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+
+  // Auto-fill date when selectedDate changes
+  useEffect(() => {
+    if (selectedDate) {
+      const dateStr = selectedDate.toISOString().split("T")[0]
+      setFormData((prev) => ({
+        ...prev,
+        start_datetime: dateStr,
+      }))
+    }
+  }, [selectedDate])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
-    }))
-  }
-
-  const handleAllDayChange = (e) => {
-    const isAllDay = e.target.checked
-    setFormData((prev) => ({
-      ...prev,
-      is_all_day: isAllDay,
-      end_datetime: isAllDay ? "" : prev.end_datetime,
     }))
   }
 
@@ -42,7 +43,7 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
     }
 
     if (!formData.start_datetime) {
-      setError("Start date and time is required")
+      setError("Date is required")
       return
     }
 
@@ -56,12 +57,7 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
         start_datetime: formData.start_datetime,
         location: formData.location || "",
         reminder: formData.reminder,
-        is_all_day: formData.is_all_day,
-      }
-
-      // Only include end_datetime if not all day and has value
-      if (!formData.is_all_day && formData.end_datetime) {
-        submitData.end_datetime = formData.end_datetime
+        is_all_day: true, // Always all day for this implementation
       }
 
       await onSubmit(submitData)
@@ -71,10 +67,9 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
         title: "",
         description: "",
         start_datetime: "",
-        end_datetime: "",
         location: "",
         reminder: false,
-        is_all_day: false,
+        is_all_day: true,
       })
       setError("")
     } catch (err) {
@@ -89,13 +84,22 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
       title: "",
       description: "",
       start_datetime: "",
-      end_datetime: "",
       location: "",
       reminder: false,
-      is_all_day: false,
+      is_all_day: true,
     })
     setError("")
     onHide()
+  }
+
+  const formatSelectedDate = () => {
+    if (!selectedDate) return ""
+    return selectedDate.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
   }
 
   return (
@@ -109,9 +113,16 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
 
+        {selectedDate && (
+          <Alert variant="info" className="d-flex align-items-center">
+            <Calendar size={16} className="me-2" />
+            <strong>Selected Date:</strong> <span className="ms-2">{formatSelectedDate()}</span>
+          </Alert>
+        )}
+
         <Form onSubmit={handleSubmit}>
           <Row>
-            <Col md={12}>
+            <Col md={8}>
               <Form.Group className="mb-3">
                 <Form.Label>Event Title *</Form.Label>
                 <Form.Control
@@ -121,20 +132,15 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
                   onChange={handleChange}
                   placeholder="Enter event title"
                   required
+                  autoFocus
                 />
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row>
-            <Col md={6}>
+            <Col md={4}>
               <Form.Group className="mb-3">
-                <Form.Label className="d-flex align-items-center">
-                  <Clock size={16} className="me-1" />
-                  Start Date & Time *
-                </Form.Label>
+                <Form.Label>Date *</Form.Label>
                 <Form.Control
-                  type={formData.is_all_day ? "date" : "datetime-local"}
+                  type="date"
                   name="start_datetime"
                   value={formData.start_datetime}
                   onChange={handleChange}
@@ -142,66 +148,43 @@ const ScheduleEventModal = ({ show, onHide, onSubmit }) => {
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label className="d-flex align-items-center">
-                  <Clock size={16} className="me-1" />
-                  End Date & Time
-                </Form.Label>
-                <Form.Control
-                  type={formData.is_all_day ? "date" : "datetime-local"}
-                  name="end_datetime"
-                  value={formData.end_datetime}
-                  onChange={handleChange}
-                  disabled={formData.is_all_day}
-                />
-              </Form.Group>
-            </Col>
           </Row>
 
           <Row>
-            <Col md={6}>
+            <Col md={8}>
               <Form.Group className="mb-3">
-                <Form.Check
-                  type="checkbox"
-                  name="is_all_day"
-                  label="All Day Event"
-                  checked={formData.is_all_day}
-                  onChange={handleAllDayChange}
+                <Form.Label className="d-flex align-items-center">
+                  <MapPin size={16} className="me-1" />
+                  Location
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder="Enter event location (optional)"
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col md={4}>
               <Form.Group className="mb-3">
-                <Form.Check
-                  type="checkbox"
-                  name="reminder"
-                  label={
-                    <span className="d-flex align-items-center">
-                      <Bell size={16} className="me-1" />
-                      Set Reminder
-                    </span>
-                  }
-                  checked={formData.reminder}
-                  onChange={handleChange}
-                />
+                <div className="mt-4">
+                  <Form.Check
+                    type="checkbox"
+                    name="reminder"
+                    label={
+                      <span className="d-flex align-items-center">
+                        <Bell size={16} className="me-1" />
+                        Set Reminder
+                      </span>
+                    }
+                    checked={formData.reminder}
+                    onChange={handleChange}
+                  />
+                </div>
               </Form.Group>
             </Col>
           </Row>
-
-          <Form.Group className="mb-3">
-            <Form.Label className="d-flex align-items-center">
-              <MapPin size={16} className="me-1" />
-              Location
-            </Form.Label>
-            <Form.Control
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="Enter event location (optional)"
-            />
-          </Form.Group>
 
           <Form.Group className="mb-4">
             <Form.Label>Event Description</Form.Label>

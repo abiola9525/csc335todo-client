@@ -129,6 +129,48 @@ body {
   background-color: #ff6b6b !important;
 }
 
+/* Enhanced Calendar Styles */
+.calendar-main {
+  background: white;
+}
+
+.calendar-day-cell {
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.calendar-day-cell:hover {
+  background-color: rgba(255, 107, 107, 0.05) !important;
+}
+
+.today-cell {
+  background-color: rgba(255, 107, 107, 0.1) !important;
+}
+
+.event-item {
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.event-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Mini Calendar Styles */
+.mini-calendar .cursor-pointer:hover {
+  background-color: rgba(255, 107, 107, 0.1) !important;
+}
+
+/* Additional color classes for events */
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
+
+.bg-teal {
+  background-color: #20c997 !important;
+}
+
 /* Enhanced task card styles */
 .task-card {
   transition: all 0.3s ease;
@@ -338,6 +380,16 @@ body {
   .search-input {
     width: 200px !important;
   }
+
+  .calendar-day-cell {
+    min-height: 80px !important;
+    font-size: 0.8rem;
+  }
+
+  .event-item {
+    font-size: 0.65rem !important;
+    padding: 2px 4px !important;
+  }
 }
 
 @media (min-width: 768px) {
@@ -386,4 +438,15 @@ body {
 
 .priority-low {
   background-color: #28a745 !important;
+}
+
+/* Calendar specific responsive styles */
+@media (max-width: 991.98px) {
+  .calendar-main {
+    overflow-x: auto;
+  }
+
+  .mini-calendar {
+    display: none;
+  }
 }
