@@ -13,9 +13,18 @@ const MainContent = () => {
   const [statuses, setStatuses] = useState([])
   const [priorities, setPriorities] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentDate, setCurrentDate] = useState(new Date())
 
   useEffect(() => {
     fetchDashboardData()
+
+    // Update the date every minute to keep it current
+    const dateInterval = setInterval(() => {
+      setCurrentDate(new Date())
+    }, 60000) // Update every minute
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(dateInterval)
   }, [])
 
   const fetchDashboardData = async () => {
@@ -34,6 +43,27 @@ const MainContent = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Format current date and day
+  const getCurrentDay = () => {
+    return currentDate.toLocaleDateString("en-US", { weekday: "long" })
+  }
+
+  const getCurrentDate = () => {
+    return currentDate.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    })
+  }
+
+  const getTodayDateForTodoSection = () => {
+    return currentDate.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      weekday: "long",
+    })
   }
 
   const getStatusName = (status) => {
@@ -158,8 +188,8 @@ const MainContent = () => {
                 <Calendar size={20} />
               </Button>
               <div className="text-end">
-                <div className="small text-muted">Tuesday</div>
-                <div className="small fw-semibold">25 Nov 2025</div>
+                <div className="small text-muted">{getCurrentDay()}</div>
+                <div className="small fw-semibold">{getCurrentDate()}</div>
               </div>
             </div>
           </Col>
@@ -198,13 +228,7 @@ const MainContent = () => {
               <Card.Body>
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <h5 className="fw-semibold text-dark mb-0">To-Do</h5>
-                  <small className="text-muted">
-                    {new Date().toLocaleDateString("en-US", {
-                      day: "numeric",
-                      month: "long",
-                      weekday: "long",
-                    })}
-                  </small>
+                  <small className="text-muted">{getTodayDateForTodoSection()}</small>
                 </div>
 
                 {loading ? (
