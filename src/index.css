@@ -1,0 +1,371 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App {
+  min-height: 100vh;
+}
+
+/* Custom styles for the todo app */
+.bg-gradient-coral {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+}
+
+.text-coral {
+  color: #ff6b6b;
+}
+
+.btn-coral {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+  color: white;
+}
+
+.btn-coral:hover {
+  background-color: #ff5252;
+  border-color: #ff5252;
+  color: white;
+}
+
+.sidebar-coral {
+  background: linear-gradient(180deg, #ff6b6b, #ff5252);
+}
+
+.form-control:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+}
+
+/* Enhanced Sidebar Styles */
+.sidebar-item {
+  transition: all 0.3s ease;
+  border-radius: 0;
+  color: white !important;
+  text-decoration: none !important;
+  border: none;
+  position: relative;
+  margin: 2px 0;
+  background: transparent !important;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  text-decoration: none !important;
+  transform: translateX(5px);
+}
+
+.sidebar-item.active {
+  background-color: white !important;
+  color: #ff6b6b !important;
+  border-right: 4px solid #ff5252;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(0) !important;
+}
+
+.sidebar-item.active:hover {
+  background-color: #f8f9fa !important;
+  color: #ff6b6b !important;
+  transform: translateX(0) !important;
+}
+
+.sidebar-item.active .nav-icon {
+  color: #ff6b6b !important;
+}
+
+.sidebar-item .nav-icon {
+  transition: transform 0.3s ease;
+  color: inherit;
+}
+
+.sidebar-item:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+/* Override Bootstrap Nav Link styles */
+.nav-link.sidebar-item {
+  color: white !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.nav-link.sidebar-item:hover {
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.nav-link.sidebar-item.active {
+  color: #ff6b6b !important;
+  background-color: white !important;
+}
+
+.nav-link.sidebar-item.active:hover {
+  color: #ff6b6b !important;
+  background-color: #f8f9fa !important;
+}
+
+/* Enhanced task card styles */
+.task-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent !important;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.task-card.border-primary {
+  border-left-color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.02);
+}
+
+/* Filter section styles */
+.filter-section {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+/* Bulk actions bar */
+.bulk-actions-bar {
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  border-radius: 8px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Overdue task indicator */
+.overdue-indicator {
+  position: relative;
+}
+
+.overdue-indicator::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #dc3545, #fd7e14);
+  border-radius: 8px;
+  z-index: -1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* File upload styles */
+.file-upload-zone {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.file-upload-zone:hover {
+  border-color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+.file-upload-zone.dragover {
+  border-color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.3s ease;
+}
+
+/* Vital tasks special styling */
+.vital-task-card {
+  border-left: 4px solid #dc3545 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.vital-task-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #dc3545, #fd7e14);
+}
+
+/* Search highlight */
+.search-highlight {
+  background-color: rgba(255, 235, 59, 0.3);
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* Filter badge */
+.filter-badge {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  color: white;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* User Avatar Styles */
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+  text-transform: uppercase;
+}
+
+/* Mobile Sidebar */
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  z-index: 1050;
+  transition: left 0.3s ease;
+}
+
+.sidebar-mobile.show {
+  left: 0;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile Header */
+.mobile-header {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .task-card {
+    margin-bottom: 1rem;
+  }
+
+  .filter-section {
+    padding: 0.75rem;
+  }
+
+  .bulk-actions-bar {
+    padding: 0.5rem;
+  }
+
+  .desktop-sidebar {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  .search-input {
+    width: 200px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-header {
+    display: none !important;
+  }
+
+  .sidebar-mobile {
+    display: none !important;
+  }
+
+  .sidebar-overlay {
+    display: none !important;
+  }
+}
+
+/* Status indicators */
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-completed {
+  background-color: #28a745;
+}
+
+.status-progress {
+  background-color: #007bff;
+}
+
+.status-not-started {
+  background-color: #dc3545;
+}
+
+/* Task priority badges */
+.priority-high {
+  background-color: #dc3545 !important;
+}
+
+.priority-medium {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.priority-low {
+  background-color: #28a745 !important;
+}
