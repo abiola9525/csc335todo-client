@@ -12,7 +12,7 @@ const Sidebar = ({ mobile = false, onClose, onNavigate, activeView = "dashboard"
     { icon: Zap, label: "Vital Task", key: "vital-task" },
     { icon: CheckSquare, label: "My Task", key: "my-task" },
     { icon: Calendar, label: "Schedule Event", key: "schedule-event" },
-    { icon: FolderOpen, label: "Task Categories", key: "task-categories" },
+    // { icon: FolderOpen, label: "Task Categories", key: "task-categories" },
     { icon: Settings, label: "Settings", key: "settings" },
     { icon: HelpCircle, label: "Help", key: "help" },
   ]
