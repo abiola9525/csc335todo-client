@@ -234,7 +234,7 @@ const MainContent = () => {
             <Card className="mb-4 border-0 shadow-sm">
               <Card.Body>
                 <h4 className="fw-semibold text-dark mb-0">
-                  Welcome back, {user?.first_name}! <span className="fs-5">👋</span>
+                  Hello, {user?.user_name}! <span className="fs-5">👋</span>
                 </h4>
               </Card.Body>
             </Card>
