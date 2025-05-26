@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "../../context/AuthContext"
-import { LayoutDashboard, Zap, CheckSquare, FolderOpen, Settings, HelpCircle, LogOut, X } from "lucide-react"
+import { LayoutDashboard, Zap, CheckSquare, FolderOpen, Calendar, Settings, HelpCircle, LogOut, X } from "lucide-react"
 import { Nav, Button } from "react-bootstrap"
 
 const Sidebar = ({ mobile = false, onClose, onNavigate, activeView = "dashboard" }) => {
@@ -11,6 +11,7 @@ const Sidebar = ({ mobile = false, onClose, onNavigate, activeView = "dashboard"
     { icon: LayoutDashboard, label: "Dashboard", key: "dashboard" },
     { icon: Zap, label: "Vital Task", key: "vital-task" },
     { icon: CheckSquare, label: "My Task", key: "my-task" },
+    { icon: Calendar, label: "Schedule Event", key: "schedule-event" },
     { icon: FolderOpen, label: "Task Categories", key: "task-categories" },
     { icon: Settings, label: "Settings", key: "settings" },
     { icon: HelpCircle, label: "Help", key: "help" },

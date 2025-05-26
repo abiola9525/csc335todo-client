@@ -1,7 +1,7 @@
 import axios from "axios"
 
-// const API_BASE_URL = "http://127.0.0.1:8000/api"
-const API_BASE_URL = "https://api-csc335todo.up.railway.app/api"
+const API_BASE_URL = "http://127.0.0.1:8000/api"
+// const API_BASE_URL = "https://api-csc335todo.up.railway.app/api"
 
 // Create axios instance
 const api = axios.create({
@@ -123,6 +123,15 @@ export const todosAPI = {
     })
   },
   delete: (id) => api.delete(`/todos/${id}/`),
+}
+
+// Events API functions
+export const eventsAPI = {
+  getAll: () => api.get("/events/"),
+  create: (eventData) => api.post("/events/", eventData),
+  getById: (id) => api.get(`/events/${id}/`),
+  update: (id, eventData) => api.put(`/events/${id}/`, eventData),
+  delete: (id) => api.delete(`/events/${id}/`),
 }
 
 export default api

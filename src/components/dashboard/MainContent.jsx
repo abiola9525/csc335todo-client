@@ -6,6 +6,8 @@ import { Search, Plus, Calendar } from "lucide-react"
 import { Row, Col, Card, Form, Button, Badge, InputGroup } from "react-bootstrap"
 import { todosAPI, statusAPI, priorityAPI } from "../../services/api"
 import { getImageUrlOrPlaceholder } from "../../utils/imageUtils"
+import CalendarWidget from "../calendar/CalendarWidget"
+import AddTaskModal from "../todos/AddTaskModal"
 
 const MainContent = () => {
   const { user } = useAuth()
@@ -14,6 +16,9 @@ const MainContent = () => {
   const [priorities, setPriorities] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [showCalendar, setShowCalendar] = useState(false)
+  const [showAddTask, setShowAddTask] = useState(false)
+  const [success, setSuccess] = useState("")
 
   useEffect(() => {
     fetchDashboardData()
@@ -42,6 +47,17 @@ const MainContent = () => {
       console.error("Error fetching dashboard data:", err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCreateTask = async (taskData) => {
+    try {
+      await todosAPI.create(taskData)
+      setSuccess("Task created successfully!")
+      setShowAddTask(false)
+      fetchDashboardData()
+    } catch (err) {
+      console.error("Error creating task:", err)
     }
   }
 
@@ -181,10 +197,10 @@ const MainContent = () => {
                 </InputGroup.Text>
                 <Form.Control type="text" placeholder="Search your task here..." />
               </InputGroup>
-              <Button className="btn-coral">
+              <Button className="btn-coral" onClick={() => setShowAddTask(true)} title="Add New Task">
                 <Plus size={20} />
               </Button>
-              <Button className="btn-coral">
+              <Button className="btn-coral" onClick={() => setShowCalendar(true)} title="Open Calendar">
                 <Calendar size={20} />
               </Button>
               <div className="text-end">
@@ -203,7 +219,7 @@ const MainContent = () => {
             <Search size={16} className="text-muted" />
           </InputGroup.Text>
           <Form.Control type="text" placeholder="Search your task here..." />
-          <Button className="btn-coral">
+          <Button className="btn-coral" onClick={() => setShowAddTask(true)}>
             <Plus size={18} />
           </Button>
         </InputGroup>
@@ -218,7 +234,7 @@ const MainContent = () => {
             <Card className="mb-4 border-0 shadow-sm">
               <Card.Body>
                 <h4 className="fw-semibold text-dark mb-0">
-                  Hello, {user?.first_name}! <span className="fs-5">👋</span>
+                  Welcome back, {user?.first_name}! <span className="fs-5">👋</span>
                 </h4>
               </Card.Body>
             </Card>
@@ -367,6 +383,23 @@ const MainContent = () => {
           </Col>
         </Row>
       </div>
+
+      {/* Calendar Widget */}
+      <CalendarWidget
+        show={showCalendar}
+        onHide={() => setShowCalendar(false)}
+        statuses={statuses}
+        priorities={priorities}
+      />
+
+      {/* Add Task Modal */}
+      <AddTaskModal
+        show={showAddTask}
+        onHide={() => setShowAddTask(false)}
+        onSubmit={handleCreateTask}
+        statuses={statuses}
+        priorities={priorities}
+      />
     </div>
   )
 }

@@ -6,9 +6,10 @@ import MainContent from "./MainContent"
 import TaskCategories from "../categories/TaskCategories"
 import MyTasks from "../todos/MyTasks"
 import TaskDetail from "../todos/TaskDetail"
+import ScheduleEvent from "../events/ScheduleEvent"
+import VitalTasks from "../todos/VitalTasks"
 import { Row, Col, Button } from "react-bootstrap"
 import { Menu } from "lucide-react"
-import VitalTasks from "../todos/VitalTasks"
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -50,6 +51,8 @@ const Dashboard = () => {
         return "My Tasks"
       case "vital-task":
         return "Vital Tasks"
+      case "schedule-event":
+        return "Schedule Event"
       case "task-detail":
         return selectedTask?.title || "Task Detail"
       case "dashboard":
@@ -66,6 +69,8 @@ const Dashboard = () => {
         return <MyTasks onGoBack={handleGoBack} onViewTask={handleViewTask} />
       case "vital-task":
         return <VitalTasks onGoBack={handleGoBack} onViewTask={handleViewTask} />
+      case "schedule-event":
+        return <ScheduleEvent onGoBack={handleGoBack} />
       case "task-detail":
         return <TaskDetail task={selectedTask} onGoBack={handleGoBack} onTaskUpdated={handleTaskUpdated} />
       case "dashboard":

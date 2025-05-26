@@ -1,7 +1,7 @@
 // Utility functions for handling image URLs
 
-// const API_BASE_URL = "http://127.0.0.1:8000"
-const API_BASE_URL = "https://api-csc335todo.up.railway.app"
+const API_BASE_URL = "http://127.0.0.1:8000"
+// const API_BASE_URL = "https://api-csc335todo.up.railway.app"
 
 /**
  * Converts a relative image path to a full URL

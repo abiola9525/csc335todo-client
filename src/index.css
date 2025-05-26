@@ -111,6 +111,24 @@ body {
   background-color: #f8f9fa !important;
 }
 
+/* Calendar Widget Styles */
+.calendar-day {
+  transition: all 0.2s ease;
+}
+
+.calendar-day-active:hover {
+  background-color: rgba(255, 107, 107, 0.1) !important;
+  transform: scale(1.05);
+}
+
+.calendar-day.has-events {
+  background-color: rgba(255, 107, 107, 0.05) !important;
+}
+
+.bg-coral {
+  background-color: #ff6b6b !important;
+}
+
 /* Enhanced task card styles */
 .task-card {
   transition: all 0.3s ease;
