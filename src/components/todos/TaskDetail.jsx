@@ -1,5 +1,6 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Container, Row, Col, Card, Button, Badge, Alert, Dropdown } from "react-bootstrap"
 import { ArrowLeft, Edit, Trash2, Calendar, Clock } from "lucide-react"
@@ -9,6 +10,7 @@ import EditTaskModal from "./EditTaskModal"
 import DeleteConfirmModal from "./DeleteConfirmModal"
 
 const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
+  const navigate = useNavigate()
   const [currentTask, setCurrentTask] = useState(task)
   const [statuses, setStatuses] = useState([])
   const [priorities, setPriorities] = useState([])
@@ -209,12 +211,12 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
         <Col>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
-              <Button variant="link" className="text-coral p-0 me-3" onClick={onGoBack}>
+              <Button variant="link" className="text-coral p-0 me-3" onClick={() => navigate(-1)}>
                 <ArrowLeft size={20} />
               </Button>
               <h3 className="fw-bold text-dark mb-0">{currentTask.title}</h3>
             </div>
-            <Button variant="link" className="text-muted text-decoration-none" onClick={onGoBack}>
+            <Button variant="link" className="text-muted text-decoration-none" onClick={() => navigate(-1)}>
               Go Back
             </Button>
           </div>

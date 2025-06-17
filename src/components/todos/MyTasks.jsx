@@ -1,5 +1,6 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Container, Row, Col, Card, Button, Badge, Alert, Spinner, InputGroup, Form, Dropdown } from "react-bootstrap"
 import { ArrowLeft, Plus, Eye, Edit, Trash2, Search } from "lucide-react"
@@ -10,6 +11,7 @@ import EditTaskModal from "./EditTaskModal"
 import DeleteConfirmModal from "./DeleteConfirmModal"
 
 const MyTasks = ({ onGoBack, onViewTask }) => {
+  const navigate = useNavigate()
   const [todos, setTodos] = useState([])
   const [statuses, setStatuses] = useState([])
   const [priorities, setPriorities] = useState([])
@@ -262,7 +264,7 @@ const MyTasks = ({ onGoBack, onViewTask }) => {
         <Col>
           <div className="d-flex align-items-center justify-content-between mb-3">
             <div className="d-flex align-items-center">
-              <Button variant="link" className="text-coral p-0 me-3" onClick={onGoBack}>
+              <Button variant="link" className="text-coral p-0 me-3" onClick={() => navigate(-1)}>
                 <ArrowLeft size={20} />
               </Button>
               <h3 className="fw-bold text-dark mb-0">My Tasks</h3>
@@ -272,7 +274,7 @@ const MyTasks = ({ onGoBack, onViewTask }) => {
                 <Plus size={16} className="me-1" />
                 Add Task
               </Button>
-              <Button variant="link" className="text-muted text-decoration-none" onClick={onGoBack}>
+              <Button variant="link" className="text-muted text-decoration-none" onClick={() => navigate(-1)}>
                 Go Back
               </Button>
             </div>

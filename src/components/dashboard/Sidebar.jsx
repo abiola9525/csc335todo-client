@@ -1,20 +1,23 @@
 "use client"
 
+import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
 import { LayoutDashboard, Zap, CheckSquare, FolderOpen, Calendar, Settings, HelpCircle, LogOut, X } from "lucide-react"
 import { Nav, Button } from "react-bootstrap"
 
-const Sidebar = ({ mobile = false, onClose, onNavigate, activeView = "dashboard" }) => {
+const Sidebar = ({ mobile = false, onClose }) => {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", key: "dashboard" },
-    { icon: Zap, label: "Vital Task", key: "vital-task" },
-    { icon: CheckSquare, label: "My Task", key: "my-task" },
-    { icon: Calendar, label: "Schedule Event", key: "schedule-event" },
-    // { icon: FolderOpen, label: "Task Categories", key: "task-categories" },
-    { icon: Settings, label: "Settings", key: "settings" },
-    { icon: HelpCircle, label: "Help", key: "help" },
+    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+    { icon: Zap, label: "Vital Task", path: "/vital-tasks" },
+    { icon: CheckSquare, label: "My Task", path: "/my-tasks" },
+    { icon: Calendar, label: "My Event", path: "/schedule-event" },
+    // { icon: FolderOpen, label: "Task Categories", path: "/task-categories" },
+    { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: HelpCircle, label: "Help", path: "/help" },
   ]
 
   // Generate user initials for avatar
@@ -57,13 +60,28 @@ const Sidebar = ({ mobile = false, onClose, onNavigate, activeView = "dashboard"
     }
   }
 
-  const handleMenuClick = (key) => {
-    if (onNavigate) {
-      onNavigate(key)
-    }
+  const handleMenuClick = (path) => {
+    navigate(path)
     if (mobile && onClose) {
       onClose()
     }
+  }
+
+  // Simple and reliable active state detection
+  const isActive = (itemPath) => {
+    const currentPath = location.pathname
+
+    // Exact match
+    if (currentPath === itemPath) {
+      return true
+    }
+
+    // Special case: task detail pages should highlight "My Task"
+    if (itemPath === "/my-tasks" && currentPath.startsWith("/task/")) {
+      return true
+    }
+
+    return false
   }
 
   return (
@@ -93,36 +111,30 @@ const Sidebar = ({ mobile = false, onClose, onNavigate, activeView = "dashboard"
       {/* Navigation Menu */}
       <Nav className="flex-column flex-grow-1 py-3">
         {menuItems.map((item, index) => (
-          <Nav.Link
+          <button
             key={index}
-            className={`sidebar-item d-flex align-items-center px-4 py-3 text-white text-decoration-none ${
-              activeView === item.key ? "active" : ""
+            type="button"
+            className={`sidebar-item d-flex align-items-center px-4 py-3 text-white text-decoration-none border-0 w-100 text-start ${
+              isActive(item.path) ? "active" : ""
             }`}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              handleMenuClick(item.key)
-            }}
+            onClick={() => handleMenuClick(item.path)}
           >
             <item.icon size={20} className="me-3 nav-icon" />
             <span>{item.label}</span>
-          </Nav.Link>
+          </button>
         ))}
       </Nav>
 
       {/* Logout Button */}
       <div className="p-3 border-top border-light border-opacity-25">
-        <Nav.Link
-          onClick={(e) => {
-            e.preventDefault()
-            handleLogout()
-          }}
-          className="sidebar-item d-flex align-items-center px-4 py-3 rounded text-white text-decoration-none"
-          href="#"
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="sidebar-item d-flex align-items-center px-4 py-3 rounded text-white text-decoration-none logout-item border-0 w-100 text-start"
         >
           <LogOut size={20} className="me-3 nav-icon" />
           <span>Logout</span>
-        </Nav.Link>
+        </button>
       </div>
     </div>
   )

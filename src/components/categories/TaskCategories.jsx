@@ -1,5 +1,6 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Container, Row, Col, Card, Table, Button, Alert, Spinner } from "react-bootstrap"
 import { ArrowLeft, Plus, Edit, Trash2 } from "lucide-react"
@@ -9,6 +10,7 @@ import EditCategoryModal from "./EditCategoryModal"
 import DeleteConfirmModal from "./DeleteConfirmModal"
 
 const TaskCategories = ({ onGoBack }) => {
+  const navigate = useNavigate()
   const [statuses, setStatuses] = useState([])
   const [priorities, setPriorities] = useState([])
   const [loading, setLoading] = useState(true)
@@ -129,12 +131,12 @@ const TaskCategories = ({ onGoBack }) => {
         <Col>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
-              <Button variant="link" className="text-coral p-0 me-3" onClick={onGoBack}>
+              <Button variant="link" className="text-coral p-0 me-3" onClick={() => navigate(-1)}>
                 <ArrowLeft size={20} />
               </Button>
               <h3 className="fw-bold text-dark mb-0">Task Categories</h3>
             </div>
-            <Button variant="link" className="text-muted text-decoration-none" onClick={onGoBack}>
+            <Button variant="link" className="text-muted text-decoration-none" onClick={() => navigate(-1)}>
               Go Back
             </Button>
           </div>

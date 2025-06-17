@@ -1,5 +1,6 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Container, Row, Col, Card, Button, Alert, Spinner } from "react-bootstrap"
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, CalendarIcon } from "lucide-react"
@@ -10,6 +11,7 @@ import EventDetailsModal from "./EventDetailsModal"
 import DeleteEventModal from "./DeleteEventModal"
 
 const ScheduleEvent = ({ onGoBack }) => {
+  const navigate = useNavigate()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
@@ -23,6 +25,13 @@ const ScheduleEvent = ({ onGoBack }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
+
+  // Helper function to truncate event titles
+  const getTruncatedEventTitle = (title, maxLength) => {
+    if (!title) return ""
+    if (title.length <= maxLength) return title
+    return title.substring(0, maxLength) + "..."
+  }
 
   useEffect(() => {
     fetchEvents()
@@ -178,6 +187,7 @@ const ScheduleEvent = ({ onGoBack }) => {
   ]
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const dayNamesShort = ["S", "M", "T", "W", "T", "F", "S"] // For mobile
   const days = getDaysInMonth(currentDate)
 
   const eventColors = [
@@ -195,6 +205,11 @@ const ScheduleEvent = ({ onGoBack }) => {
     return eventColors[eventId % eventColors.length]
   }
 
+  const truncateText = (text, maxLength) => {
+    if (text.length <= maxLength) return text
+    return text.substring(0, maxLength) + "..."
+  }
+
   if (loading) {
     return (
       <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
@@ -204,24 +219,24 @@ const ScheduleEvent = ({ onGoBack }) => {
   }
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-2 p-md-4">
       {/* Header */}
-      <Row className="mb-4">
+      <Row className="mb-3 mb-md-4">
         <Col>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
-              <Button variant="link" className="text-coral p-0 me-3" onClick={onGoBack}>
+              <Button variant="link" className="text-coral p-0 me-2 me-md-3" onClick={() => navigate(-1)}>
                 <ArrowLeft size={20} />
               </Button>
               <div>
-                <h3 className="fw-bold text-dark mb-0 d-flex align-items-center">
-                  <CalendarIcon size={24} className="text-coral me-2" />
+                <h3 className="fw-bold text-dark mb-0 d-flex align-items-center fs-5 fs-md-3">
+                  <CalendarIcon size={20} className="text-coral me-2 d-none d-md-inline" />
                   Event Calendar
                 </h3>
-                <small className="text-muted">Click on any date to schedule an event</small>
+                <small className="text-muted d-none d-md-block">Click on any date to schedule an event</small>
               </div>
             </div>
-            <Button variant="link" className="text-muted text-decoration-none" onClick={onGoBack}>
+            <Button variant="link" className="text-muted text-decoration-none d-none d-md-block" onClick={() => navigate(-1)}>
               Go Back
             </Button>
           </div>
@@ -241,8 +256,8 @@ const ScheduleEvent = ({ onGoBack }) => {
       )}
 
       <Row>
-        {/* Left Sidebar - Mini Calendar */}
-        <Col lg={3} className="mb-4 mb-lg-0">
+        {/* Left Sidebar - Hidden on mobile, shown as top section on larger screens */}
+        <Col lg={3} className="mb-3 mb-lg-0 d-none d-lg-block">
           <Card className="border-0 shadow-sm mb-4">
             <Card.Body>
               <h6 className="fw-semibold text-dark mb-3">Quick Actions</h6>
@@ -308,21 +323,34 @@ const ScheduleEvent = ({ onGoBack }) => {
 
         {/* Main Calendar */}
         <Col lg={9}>
+          {/* Mobile Quick Actions */}
+          <div className="d-lg-none mb-3">
+            <div className="d-flex gap-2 justify-content-center">
+              <Button className="btn-coral" size="sm" onClick={() => setShowCreateModal(true)}>
+                <Plus size={16} className="me-1" />
+                Add Event
+              </Button>
+              <Button variant="outline-secondary" size="sm" onClick={goToToday}>
+                Today
+              </Button>
+            </div>
+          </div>
+
           <Card className="border-0 shadow-sm">
             <Card.Header className="bg-white border-bottom">
               <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center gap-3">
-                  <Button variant="outline-secondary" onClick={() => navigateMonth(-1)}>
+                <div className="d-flex align-items-center gap-2 gap-md-3">
+                  <Button variant="outline-secondary" size="sm" onClick={() => navigateMonth(-1)}>
                     <ChevronLeft size={16} />
                   </Button>
-                  <h4 className="fw-bold text-dark mb-0">
+                  <h4 className="fw-bold text-dark mb-0 fs-6 fs-md-4">
                     {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                   </h4>
-                  <Button variant="outline-secondary" onClick={() => navigateMonth(1)}>
+                  <Button variant="outline-secondary" size="sm" onClick={() => navigateMonth(1)}>
                     <ChevronRight size={16} />
                   </Button>
                 </div>
-                <div className="d-flex gap-2">
+                <div className="d-none d-md-flex gap-2">
                   <Button variant="outline-primary" size="sm" onClick={goToToday}>
                     Today
                   </Button>
@@ -338,9 +366,11 @@ const ScheduleEvent = ({ onGoBack }) => {
               <div className="calendar-main">
                 {/* Day Headers */}
                 <div className="d-grid border-bottom" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
-                  {dayNames.map((day) => (
-                    <div key={day} className="text-center fw-semibold text-muted py-3 border-end">
-                      {day}
+                  {/* Show full day names on desktop, short on mobile */}
+                  {dayNames.map((day, index) => (
+                    <div key={day} className="text-center fw-semibold text-muted py-2 py-md-3 border-end">
+                      <span className="d-none d-md-inline">{day}</span>
+                      <span className="d-md-none">{dayNamesShort[index]}</span>
                     </div>
                   ))}
                 </div>
@@ -352,46 +382,62 @@ const ScheduleEvent = ({ onGoBack }) => {
                     return (
                       <div
                         key={index}
-                        className={`calendar-day-cell border-end border-bottom p-2 ${
+                        className={`calendar-day-cell border-end border-bottom p-1 p-md-2 ${
                           dayObj.isCurrentMonth ? "" : "bg-light"
                         } ${isToday(dayObj.date) ? "today-cell" : ""}`}
                         onClick={() => handleDateClick(dayObj.date)}
                         style={{
-                          minHeight: "120px",
+                          minHeight: window.innerWidth < 768 ? "60px" : "120px",
                           cursor: "pointer",
                           position: "relative",
                         }}
                       >
                         <div
-                          className={`fw-semibold mb-2 ${
+                          className={`fw-semibold mb-1 mb-md-2 small ${
                             dayObj.isCurrentMonth ? "text-dark" : "text-muted"
                           } ${isToday(dayObj.date) ? "text-coral" : ""}`}
                         >
                           {dayObj.date.getDate()}
                         </div>
 
-                        {/* Events */}
+                        {/* Events - Mobile Responsive with proper text truncation */}
                         <div className="d-flex flex-column gap-1">
-                          {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                          {dayEvents.slice(0, window.innerWidth < 768 ? 2 : 3).map((event, eventIndex) => (
                             <div
                               key={event.id}
-                              className={`event-item small text-white rounded px-2 py-1 ${getEventColor(
+                              className={`event-item text-white rounded px-1 py-1 ${getEventColor(
                                 event.id,
                               )} cursor-pointer`}
                               onClick={(e) => handleEventClick(event, e)}
                               style={{
-                                fontSize: "0.75rem",
+                                fontSize: window.innerWidth < 768 ? "0.6rem" : "0.75rem",
                                 cursor: "pointer",
+                                lineHeight: "1.2",
+                                wordBreak: "break-word",
+                                hyphens: "auto",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                maxWidth: "100%",
+                              }}
+                              title={event.title} // Show full title on hover
+                            >
+                              {getTruncatedEventTitle(event.title, window.innerWidth < 768 ? 8 : 12)}
+                            </div>
+                          ))}
+                          {dayEvents.length > (window.innerWidth < 768 ? 2 : 3) && (
+                            <div
+                              className="small text-muted"
+                              style={{
+                                fontSize: "0.6rem",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 whiteSpace: "nowrap",
                               }}
-                              title={event.title}
                             >
-                              {event.title}
+                              +{dayEvents.length - (window.innerWidth < 768 ? 2 : 3)} more
                             </div>
-                          ))}
-                          {dayEvents.length > 3 && <div className="small text-muted">+{dayEvents.length - 3} more</div>}
+                          )}
                         </div>
                       </div>
                     )

@@ -1,11 +1,13 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Container, Row, Col, Card, Button, Badge, Alert, Spinner } from "react-bootstrap"
 import { ArrowLeft, Eye, AlertTriangle } from "lucide-react"
 import { todosAPI, statusAPI, priorityAPI } from "../../services/api"
 
 const VitalTasks = ({ onGoBack, onViewTask }) => {
+  const navigate = useNavigate()
   const [todos, setTodos] = useState([])
   const [statuses, setStatuses] = useState([])
   const [priorities, setPriorities] = useState([])
@@ -154,7 +156,7 @@ const VitalTasks = ({ onGoBack, onViewTask }) => {
         <Col>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
-              <Button variant="link" className="text-coral p-0 me-3" onClick={onGoBack}>
+              <Button variant="link" className="text-coral p-0 me-3" onClick={() => navigate(-1)}>
                 <ArrowLeft size={20} />
               </Button>
               <div>
@@ -165,7 +167,7 @@ const VitalTasks = ({ onGoBack, onViewTask }) => {
                 <small className="text-muted">High priority and overdue tasks</small>
               </div>
             </div>
-            <Button variant="link" className="text-muted text-decoration-none" onClick={onGoBack}>
+            <Button variant="link" className="text-muted text-decoration-none" onClick={() => navigate(-1)}>
               Go Back
             </Button>
           </div>

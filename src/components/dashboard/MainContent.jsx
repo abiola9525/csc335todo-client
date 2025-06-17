@@ -573,6 +573,7 @@ const MainContent = () => {
                                   Priority: {getPriorityName(task.priority)}
                                 </Badge>
 
+
                                 {/* Mobile-Optimized Status Update Dropdown */}
                                 <Dropdown>
                                   <Dropdown.Toggle
@@ -591,7 +592,7 @@ const MainContent = () => {
                                       </>
                                     )}
                                   </Dropdown.Toggle>
-                                  <Dropdown.Menu align="end" className="mobile-dropdown-menu">
+                                  {/* <Dropdown.Menu align="end" className="mobile-dropdown-menu">
                                     {statuses.map((status) => (
                                       <Dropdown.Item
                                         key={status.id}
@@ -614,7 +615,7 @@ const MainContent = () => {
                                         {status.name}
                                       </Dropdown.Item>
                                     ))}
-                                  </Dropdown.Menu>
+                                  </Dropdown.Menu> */}
                                 </Dropdown>
                               </div>
                               <small className="text-muted">Due: {formatDate(task.due_date)}</small>
