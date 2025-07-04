@@ -95,6 +95,14 @@ const Sidebar = ({ mobile = false, onClose }) => {
         </div>
       )}
 
+      {/* TaskNest Branding */}
+      <div className="p-4 text-center border-bottom border-light border-opacity-25">
+        <h3 className="mb-0 fw-bold">
+          <span style={{ color: "#ffffff" }}>Task</span>
+          <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>Nest</span>
+        </h3>
+      </div>
+
       {/* User Profile Section */}
       <div className="p-4 border-bottom border-light border-opacity-25">
         <div className="d-flex align-items-center">

@@ -56,6 +56,12 @@ const SignIn = () => {
                 <Col lg={6}>
                   <Card.Body className="p-5">
                     <div className="text-center mb-4">
+                      <div className="mb-3">
+                        <h1 className="fw-bold mb-0" style={{ fontSize: "2.5rem" }}>
+                          <span style={{ color: "#ff6b6b" }}>Task</span>
+                          <span style={{ color: "#ff8e8e" }}>Nest</span>
+                        </h1>
+                      </div>
                       <h2 className="fw-bold text-dark mb-0">Sign In</h2>
                     </div>
 
