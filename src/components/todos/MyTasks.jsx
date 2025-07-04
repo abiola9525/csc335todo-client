@@ -437,7 +437,7 @@ const MyTasks = ({ onGoBack, onViewTask }) => {
                         <Button
                           variant="outline-primary"
                           size="sm"
-                          onClick={() => onViewTask(task)}
+                          onClick={() => navigate(`/task/${task.id}`)}
                           title="View Details"
                         >
                           <Eye size={14} />

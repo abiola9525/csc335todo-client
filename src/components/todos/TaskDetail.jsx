@@ -1,20 +1,21 @@
 "use client"
-
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
-import { Container, Row, Col, Card, Button, Badge, Alert, Dropdown } from "react-bootstrap"
+import { Container, Row, Col, Card, Button, Badge, Alert, Dropdown, Spinner } from "react-bootstrap"
 import { ArrowLeft, Edit, Trash2, Calendar, Clock } from "lucide-react"
 import { todosAPI, statusAPI, priorityAPI } from "../../services/api"
 import { getImageUrlOrPlaceholder } from "../../utils/imageUtils"
 import EditTaskModal from "./EditTaskModal"
 import DeleteConfirmModal from "./DeleteConfirmModal"
 
-const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
+const TaskDetail = ({ onGoBack, onTaskUpdated }) => {
   const navigate = useNavigate()
-  const [currentTask, setCurrentTask] = useState(task)
+  const { id } = useParams() // Get task ID from URL
+  const [currentTask, setCurrentTask] = useState(null)
   const [statuses, setStatuses] = useState([])
   const [priorities, setPriorities] = useState([])
   const [loading, setLoading] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(true) // For initial task fetch
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
@@ -24,12 +25,28 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
 
   useEffect(() => {
     fetchCategoriesData()
-  }, [])
+    if (id) {
+      fetchTaskData()
+    }
+  }, [id])
+
+  const fetchTaskData = async () => {
+    try {
+      setInitialLoading(true)
+      const response = await todosAPI.getById(id)
+      setCurrentTask(response.data)
+      setError("")
+    } catch (err) {
+      setError("Failed to fetch task details")
+      console.error("Error fetching task:", err)
+    } finally {
+      setInitialLoading(false)
+    }
+  }
 
   const fetchCategoriesData = async () => {
     try {
       const [statusResponse, priorityResponse] = await Promise.all([statusAPI.getAll(), priorityAPI.getAll()])
-
       setStatuses(statusResponse.data)
       setPriorities(priorityResponse.data)
     } catch (err) {
@@ -62,7 +79,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
       const priorityObj = priorities.find((p) => p.id === priority)
       priorityName = priorityObj ? priorityObj.name : ""
     }
-
     switch (priorityName.toLowerCase()) {
       case "high":
       case "extreme":
@@ -85,7 +101,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
       const statusObj = statuses.find((s) => s.id === status)
       statusName = statusObj ? statusObj.name : ""
     }
-
     switch (statusName.toLowerCase()) {
       case "completed":
         return "bg-success"
@@ -102,7 +117,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
   const handleStatusChange = async (newStatusId) => {
     try {
       setLoading(true)
-
       // Prepare the update data with all existing fields
       const updateData = {
         title: currentTask.title,
@@ -111,17 +125,13 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
         priority_id: typeof currentTask.priority === "object" ? currentTask.priority.id : currentTask.priority_id,
         due_date: currentTask.due_date || null,
       }
-
       // Don't include image in the update unless we're changing it
       // The API should preserve the existing image if not provided
-
       const response = await todosAPI.update(currentTask.id, updateData)
-
       // Update the current task with the response data
       const updatedTask = response.data
       setCurrentTask(updatedTask)
       setSuccess("Task status updated successfully!")
-
       // Update the parent component if callback is provided
       if (onTaskUpdated) {
         onTaskUpdated(updatedTask)
@@ -129,7 +139,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
     } catch (err) {
       console.error("Error updating task status:", err)
       let errorMessage = "Failed to update task status"
-
       if (err.response?.data) {
         if (typeof err.response.data === "string") {
           errorMessage = err.response.data
@@ -152,7 +161,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
           }
         }
       }
-
       setError(errorMessage)
     } finally {
       setLoading(false)
@@ -177,7 +185,7 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
       await todosAPI.delete(currentTask.id)
       setSuccess("Task deleted successfully!")
       setShowDeleteModal(false)
-      setTimeout(() => onGoBack(), 1500)
+      setTimeout(() => navigate("/my-tasks"), 1500)
     } catch (err) {
       setError("Failed to delete task")
       console.error("Error deleting task:", err)
@@ -202,6 +210,42 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
       hour: "2-digit",
       minute: "2-digit",
     })
+  }
+
+  // Show loading spinner while fetching initial data
+  if (initialLoading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+        <Spinner animation="border" variant="danger" />
+      </Container>
+    )
+  }
+
+  // Show error if task not found
+  if (!currentTask) {
+    return (
+      <Container fluid className="p-4">
+        <Row className="mb-4">
+          <Col>
+            <div className="d-flex align-items-center">
+              <Button variant="link" className="text-coral p-0 me-3" onClick={() => navigate(-1)}>
+                <ArrowLeft size={20} />
+              </Button>
+              <h3 className="fw-bold text-dark mb-0">Task Not Found</h3>
+            </div>
+          </Col>
+        </Row>
+        {error && (
+          <Alert variant="danger" dismissible onClose={() => setError("")}>
+            {error}
+          </Alert>
+        )}
+        <Alert variant="warning">The requested task could not be found.</Alert>
+        <Button variant="outline-primary" onClick={() => navigate("/my-tasks")}>
+          Back to My Tasks
+        </Button>
+      </Container>
+    )
   }
 
   return (
@@ -284,7 +328,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
-
               <div className="d-flex gap-2">
                 <Button
                   variant="outline-warning"
@@ -325,7 +368,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
                   </div>
                 )}
               </div>
-
               <div className="mb-4">
                 <h5 className="fw-semibold text-dark mb-3">Task Description:</h5>
                 <div className="bg-light p-3 rounded">
@@ -342,7 +384,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
                   )}
                 </div>
               </div>
-
               {/* Task Objective */}
               <div className="mb-4">
                 <h6 className="fw-semibold text-dark mb-2">Objective:</h6>
@@ -350,7 +391,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
                   Complete this task according to the specified requirements and within the given timeframe.
                 </p>
               </div>
-
               {/* Additional Notes */}
               <div className="mb-4">
                 <h6 className="fw-semibold text-dark mb-2">Additional Notes:</h6>
@@ -360,7 +400,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
                   <li>Contact team members if assistance is needed</li>
                 </ul>
               </div>
-
               {currentTask.due_date && (
                 <div className="alert alert-info">
                   <strong>Deadline for Completion:</strong> {formatDate(currentTask.due_date)}
@@ -380,7 +419,6 @@ const TaskDetail = ({ task, onGoBack, onTaskUpdated }) => {
         statuses={statuses}
         priorities={priorities}
       />
-
       <DeleteConfirmModal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}

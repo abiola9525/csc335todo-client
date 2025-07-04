@@ -201,7 +201,7 @@ const VitalTasks = ({ onGoBack, onViewTask }) => {
                   <div className="d-flex justify-content-between align-items-start mb-3">
                     <h6 className="fw-semibold text-dark mb-0 flex-grow-1">{task.title}</h6>
                     <div className="d-flex gap-1 ms-2">
-                      <Button variant="outline-primary" size="sm" onClick={() => onViewTask(task)} title="View Details">
+                      <Button variant="outline-primary" size="sm" onClick={() => navigate(`/task/${task.id}`)} title="View Details">
                         <Eye size={14} />
                       </Button>
                     </div>
